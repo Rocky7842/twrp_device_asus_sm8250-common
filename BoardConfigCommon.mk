@@ -73,6 +73,9 @@ BOARD_RAMDISK_OFFSET       := 0x01000000
 BOARD_DTB_OFFSET           := 0x01f00000
 TARGET_KERNEL_ARCH := $(TARGET_ARCH)
 TARGET_NO_KERNEL := false
+BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(BOARD_KERNEL_IMAGE_NAME)
 BOARD_INCLUDE_RECOVERY_DTBO := true
 BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
 BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
@@ -161,6 +164,7 @@ TARGET_RECOVERY_QCOM_RTC_FIX := true
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
 TW_THEME := portrait_hdpi
+TW_STATUS_ICONS_ALIGN := center
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
 TW_QCOM_ATS_OFFSET := 1621617233500
 TW_DEFAULT_BRIGHTNESS := 420
@@ -179,6 +183,7 @@ RECOVERY_LIBRARY_SOURCE_FILES += \
     $(TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES)/vendor.display.config@1.0.so \
     $(TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES)/vendor.display.config@2.0.so
 TW_LOAD_VENDOR_MODULES := "texfat.ko tntfs.ko"
+TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
 
 # TWRP Debug Flags
 #TWRP_EVENT_LOGGING := true
@@ -199,9 +204,12 @@ ifneq ($(wildcard bootable/recovery/installer/.),)
 endif
 
 # Custom TWRP Versioning
+# See https://github.com/minimal-manifest-twrp/android_device_common_version-info for details
 ifneq ($(wildcard device/common/version-info/.),)
+    # version prefix is optional - the default value is "LOCAL" if nothing is set in device tree
     CUSTOM_TWRP_VERSION_PREFIX := CPTB
 
+    # Uncomment the below line to use custom device version
     include device/common/version-info/custom_twrp_version.mk
 
     ifeq ($(CUSTOM_TWRP_VERSION),)

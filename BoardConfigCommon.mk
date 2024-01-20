@@ -177,12 +177,12 @@ TW_INCLUDE_PYTHON := true
 TW_INCLUDE_RESETPROP := true
 TW_NO_EXFAT_FUSE := true
 TW_OVERRIDE_SYSTEM_PROPS := \
-    "ro.build.date.utc;ro.bootimage.build.date.utc=ro.build.date.utc;ro.odm.build.date.utc=ro.build.date.utc;ro.product.build.date.utc=ro.build.date.utc;ro.system.build.date.utc=ro.build.date.utc;ro.system_ext.build.date.utc=ro.build.date.utc;ro.vendor.build.date.utc=ro.build.date.utc;ro.build.product;ro.build.fingerprint=ro.system.build.fingerprint;ro.build.version.incremental;ro.product.device=ro.product.system.device;ro.product.model=ro.product.system.model;ro.product.name=ro.product.system.name"
+    "ro.build.product;ro.build.fingerprint=ro.system.build.fingerprint;ro.build.version.incremental;ro.product.device=ro.product.system.device;ro.product.model=ro.product.system.model;ro.product.name=ro.product.system.name"
 RECOVERY_LIBRARY_SOURCE_FILES += \
     $(TARGET_OUT_SHARED_LIBRARIES)/libion.so \
     $(TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES)/vendor.display.config@1.0.so \
     $(TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES)/vendor.display.config@2.0.so
-TW_LOAD_VENDOR_MODULES := "texfat.ko tntfs.ko"
+TW_LOAD_VENDOR_MODULES := $(shell echo \"$(shell ls $(DEVICE_PATH)/prebuilt/modules)\")
 TW_LOAD_VENDOR_MODULES_EXCLUDE_GKI := true
 
 # TWRP Debug Flags
@@ -205,15 +205,17 @@ endif
 
 # Custom TWRP Versioning
 # See https://github.com/minimal-manifest-twrp/android_device_common_version-info for details
-ifneq ($(wildcard device/common/version-info/.),)
-    # version prefix is optional - the default value is "LOCAL" if nothing is set in device tree
-    CUSTOM_TWRP_VERSION_PREFIX := CPTB
+ifneq ($(USE_CUSTOM_VERSION),)
+    ifneq ($(wildcard device/common/version-info/.),)
+        # version prefix is optional - the default value is "LOCAL" if nothing is set in device tree
+        CUSTOM_TWRP_VERSION_PREFIX := CPTB
 
-    # Uncomment the below line to use custom device version
-    include device/common/version-info/custom_twrp_version.mk
+        # Repo must be synced for automatic custom versioning to work
+        include device/common/version-info/custom_twrp_version.mk
 
-    ifeq ($(CUSTOM_TWRP_VERSION),)
-        CUSTOM_TWRP_VERSION := $(shell date +%Y%m%d)-01
+        ifeq ($(CUSTOM_TWRP_VERSION),)
+            CUSTOM_TWRP_VERSION := $(shell date +%Y%m%d)-01
+        endif
     endif
 endif
 #

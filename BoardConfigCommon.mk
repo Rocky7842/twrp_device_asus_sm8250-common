@@ -165,7 +165,6 @@ TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
 TW_THEME := portrait_hdpi
 TW_STATUS_ICONS_ALIGN := center
-TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
 TW_QCOM_ATS_OFFSET := 1621617233500
 TW_DEFAULT_BRIGHTNESS := 420
 TW_EXCLUDE_APEX := true
